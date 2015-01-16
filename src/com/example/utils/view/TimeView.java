@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,7 +17,7 @@ import com.example.test.MainActivity.BackgroundCallback;
 
 public class TimeView extends TextView {
     private Time mTime;
-    private BackgroundCallback mCallback;
+    private BackgroundCallback<View, Void, Void> mCallback;
 
     public TimeView(Context context) {
         super(context);
@@ -44,7 +45,6 @@ public class TimeView extends TextView {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        Toast.makeText(getContext(), "onTouchEvent", Toast.LENGTH_SHORT).show();
 
         setBackgroundColor(randomColor());
         mCallback.callback(this, null, null);
@@ -61,8 +61,8 @@ public class TimeView extends TextView {
 
     }
 
-    public void setCallback(BackgroundCallback callback) {
-        mCallback = callback;
+    public void setCallback(BackgroundCallback<View, Void, Void> callback) {
+        mCallback = (BackgroundCallback<View, Void, Void>) callback;
     }
 
     private class Time extends Thread {

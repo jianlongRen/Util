@@ -10,6 +10,9 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
+import android.view.ScaleGestureDetector.OnScaleGestureListener;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,6 +22,38 @@ import com.example.utils.view.TimeView;
 
 public class MainActivity extends Activity {
     TextView copy;
+    private ScaleGestureDetector mGestureDetector;
+    private OnScaleGestureListener mGestureListener = new OnScaleGestureListener() {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+
+            final float scale = detector.getScaleFactor();
+            if (Float.isNaN(scale) || Float.isInfinite(scale)) {
+                return false;
+            }
+
+            if (scale <= 0.95) {
+                Toast.makeText(MainActivity.this, "onScale" + scale,
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            if (scale >= 1.05) {
+                Toast.makeText(MainActivity.this, "onScale:" + scale,
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            return true;
+        }
+
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector detector) {
+            return true;
+        }
+
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector) {
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +70,14 @@ public class MainActivity extends Activity {
 
             }
         });
+
+        mGestureDetector = new ScaleGestureDetector(this, mGestureListener);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        mGestureDetector.onTouchEvent(event);
+        return super.onTouchEvent(event);
     }
 
     private Drawable create(TimeView view) {
@@ -45,13 +88,13 @@ public class MainActivity extends Activity {
 
         final Rect rect = new Rect();
         view.getDrawingRect(rect);
-        ////////////////////////////////////////
+        // //////////////////////////////////////
         canvas.save();
         canvas.translate(-view.getScrollX(), -view.getScrollY());
         canvas.clipRect(rect);
         view.draw(canvas);
         canvas.restore();
-        ////////////////////////////////////////
+        // //////////////////////////////////////
 
         canvas.setBitmap(null);
         Toast.makeText(this, "bitmap: " + bm.getByteCount(), Toast.LENGTH_SHORT)
@@ -69,4 +112,5 @@ public class MainActivity extends Activity {
         void callback(E e, F f, G g);
 
     }
+
 }
